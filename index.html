@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Learn the Looks of NMIXX</title>
+<title>Learn the Faces of NMIXX</title>
 <style>
 :root{
   box-sizing:border-box;
@@ -24,6 +24,7 @@ h1{font-size:clamp(2.2rem,9vw,3.2rem);line-height:1;margin:6px 0 4px;font-weight
 .chip span:first-child{font-weight:400}
 .card{background:var(--card);border:3px solid var(--ink);border-radius:24px;padding:16px;box-shadow:6px 6px 0 var(--ink)}
 .pic{position:relative;aspect-ratio:1;border:3px solid var(--ink);border-radius:18px;overflow:hidden;background:linear-gradient(160deg,var(--sky),var(--mint));display:grid;place-items:center}
+.photo{width:100%;height:100%;object-fit:cover}
 .emoji{font-size:clamp(7rem,38vw,11rem);line-height:1;user-select:none}
 .modes{display:flex;gap:10px;margin-bottom:14px}
 .modes button{flex:1}
@@ -68,7 +69,8 @@ button.go{background:var(--tomato)}
     <div class="chip"><span>Streak</span><b id="streak">0</b></div>
   </div>
   <section class="card" id="game">
-    <div class="pic" id="pic"><div class="emoji" id="emoji"></div></div>
+    <!-- place to tell that we are putting the image in the frame -->
+    <div class="pic" id="pic"><img id="photo" alt=""></div></div>
     <div class="lives" id="lives" aria-live="polite"></div>
     <div class="opts" id="opts" role="group" aria-label="Answer options"></div>
     <div class="tools"><button class="alt" id="skip">Skip</button></div>
@@ -76,9 +78,22 @@ button.go{background:var(--tomato)}
   </section>
 </main>
 <script>
+
+// Custom images goes here
 const ROUNDS=[
-  {e:"🐨",a:"🐨 Lily"},{e:"🐻",a:"🐻 Haewon"},{e:"🐰",a:"🐰 Sullyoon"},
-  {e:"🐤",a:"🐤 Bae"},{e:"🐶",a:"🐶 Jiwoo"},{e:"🐱",a:"🐱 Kyujin"}  
+  {e:"images/0ac0c0df499d6d5772454c62787a99588ab3dfd5.jpg",a:"🐨 Lily"},
+  {e:"images/ertyuinji7654edfghui76556yuik.jpg",a:"🐨 Lily"},
+  {e:"images/04cec0c6399439b626a1a2220a05c7574ebedc86.jpg",a:"🐻 Haewon"},
+  {e:"images/12e12haiiidj2dn2i1o.jpg",a:"🐻 Haewon"},
+  {e:"images/0f001242e341866fa5f88ccefe7db8dfabb84bb6.jpg",a:"🐰 Sullyoon"},
+  {e:"images/aasdddddddddddwmlwid92.jpg",a:"🐰 Sullyoon"},
+  {e:"images/1a9a257205badaba03a291014df1b4c237b2f539.jpg",a:"🐤 Bae"},
+  {e:"images/adf9d7a7s8d09tc98y0a8w0918hd1.jpg",a:"🐤 Bae"},
+  {e:"images/fdb1a2a6a31afe9ac8f09eb47ad12e1bc6daa4cb.jpg",a:"🐶 Jiwoo"},
+  {e:"images/121udnoioin1ondoasnco09821d.jpg",a:"🐶 Jiwoo"},
+  {e:"images/1923e113bb59e3bdd8aafa435af41612b14ef982.jpg",a:"🐱 Kyujin"},
+  {e:"images/asdqbwiudo120801808129d7918d.jpg",a:"🐱 Kyujin"}
+
 ];
 const OPTIONS=ROUNDS.map(r=>r.a);
 const MAX_WRONG=4;
@@ -107,10 +122,10 @@ function start(){
 function loadRound(){
   cur=mode==="classic"?order[idx]:nextEndless();
   wrong=0;done=false;
-  $("emoji").textContent=cur.e;
+  $("photo").src=cur.img;
   $("opts").innerHTML=OPTIONS.map(o=>`<button class="opt" data-a="${o}">${o}</button>`).join("");
   document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b));
-  $("round").textContent=mode==="classic"?(idx+1)+"/"+order.length:"#"+(idx+1);
+  $("round").textContent=mode==="classic"?(idx+1)+"/"+order.length:""+(idx+1);
   $("score").textContent=score;$("streak").textContent=streak;
   msg("");renderLives();
   const sk=$("skip");sk.textContent="Skip";sk.className="alt";sk.onclick=skip;
@@ -154,12 +169,13 @@ function results(){
   let face,body;
   if(mode==="classic"){
     const max=order.length*12;
-    face=score>=max*.7?"🏆":score>=max*.4?"🎉":"🙈";
-    body=`<p>${order.length} pictures played. Best possible is ${max}.</p>`;
+    face=score>=max*.7?"images/daesang.jpg":score>=max*.4?"images/celebrate.gif":"images/disappointed.gif";
+    body=`<p>${order.length} pictures played.</p>`;
+//    body=`<p>${order.length} pictures played. Best possible is ${max}.</p>`;
   }else{
     let best=0;
     try{best=parseInt(localStorage.getItem("nmixx-best-endless")||"0",10)||0;if(score>best){best=score;localStorage.setItem("nmixx-best-endless",String(best))}}catch(e){best=Math.max(best,score)}
-    face=solved>=12?"🏆":solved>=5?"🎉":"🙈";
+    face=solved>=12?"images/daesang.jpg":solved>=5?"images/celebrate1.gif":"images/disappointed1.gif";
     body=`<p>You got ${solved} member picture${solved===1?"":"s"} before running out of hearts. Best your score: ${best}.</p>`;
   }
   $("game").innerHTML=`<div class="end"><div class="big">${face}</div><h2>You scored ${score}</h2>${body}<button class="go" id="again">Play again</button></div>`;
