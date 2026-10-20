@@ -71,7 +71,7 @@ button.go{background:var(--tomato)}
 <body>
 <main>
   <h1>Learn who is whO.O</h1>
-  <p class="sub">Choose the correct member in the frame, you lose a heart for every wrong answer.</p>
+  <p class="sub">Choose the correct member in the frame, you lose a heart for every wrong answer. Skips dont lose hearts.</p>
   <div class="modes" role="group" aria-label="Game mode">
     <button class="alt" id="m-classic" aria-pressed="true">Classic</button>
     <button class="alt" id="m-endless" aria-pressed="false">Endless</button>
@@ -223,7 +223,7 @@ function results(){
   if(mode==="classic"){
     const max=order.length*12;
     face=score>=max*.7?"images/daesang.jpg":score>=max*.4?"images/celebrate.gif":"images/disappointed.gif";
-    body=`<p>${idx} of ${order.length} pictures played.`;
+    body=`<p>${idx} of ${order.length} pictures played.</p>`;
 //   body=`<p>${idx} of ${order.length} pictures played. Best possible is ${max}.</p>`;
   }else{
     let best=0;
