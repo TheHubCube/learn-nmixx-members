@@ -9,13 +9,18 @@
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
-  --bg:"images/strangemuse.jpg"; --card:#ffffff; --ink:#2a1b3d; --grape:#5b3a9e; --tomato:#ff5a4e; --mint:#2fd08f; --sky:#4cc3ff;
+  --bg:#325479; --card:#ffffff; --ink:#2a1b3d; --grape:#5b3a9e; --tomato:#ff5a4e; --mint:#2fd08f; --sky:#4cc3ff;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a1b3d;--card:#3a2756;--ink:#fff4d6;--grape:#a98bff;--tomato:#ff7a6e;--mint:#3fe0a0;--sky:#6fd0ff}}
 :root[data-theme="dark"]{--bg:#2a1b3d;--card:#3a2756;--ink:#fff4d6;--grape:#a98bff;--tomato:#ff7a6e;--mint:#3fe0a0;--sky:#6fd0ff}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;font-size:18px;line-height:1.4;display:flex;justify-content:center;padding:20px 14px 40px}
+body{margin:0;min-height:100vh;background:var(--bg);
+  background-image:url("images/strangemuse.jpg");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-attachment:fixed;color:var(--ink);font-family:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;font-size:18px;line-height:1.4;display:flex;justify-content:center;padding:20px 14px 40px}
 main{width:100%;max-width:520px}
 h1{font-size:clamp(2.2rem,9vw,3.2rem);line-height:1;margin:6px 0 4px;font-weight:700;letter-spacing:-.01em;transform:rotate(-2deg);display:inline-block}
 .sub{margin:0 0 16px;font-size:1rem;opacity:.85}
@@ -31,6 +36,13 @@ h1{font-size:clamp(2.2rem,9vw,3.2rem);line-height:1;margin:6px 0 4px;font-weight
 .modes button[aria-pressed="true"]{background:var(--grape);color:#fff}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 .opt{background:var(--card);color:var(--ink);text-align:center;padding:12px 8px}
+.opt{color:#2a1b3d}
+.opt:nth-child(1){background:#C6DCF3}
+.opt:nth-child(2){background:#FFFFFF}
+.opt:nth-child(3){background:#083090}
+.opt:nth-child(4){background:#FFF677}
+.opt:nth-child(5){background:#E8364C}
+.opt:nth-child(6){background:#F4AFCC}
 .opt:disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through;box-shadow:none;transform:none}
 .opt.right{background:var(--mint);color:var(--ink);opacity:1;text-decoration:none}
 .opt.shake{animation:shake .35s}
@@ -80,6 +92,7 @@ button.go{background:var(--tomato)}
 </main>
 <script>
 
+// Declarables
 // Custom images goes here
 const ROUNDS=[
   {e:"images/0ac0c0df499d6d5772454c62787a99588ab3dfd5.jpg",a:"🐨 Lily"},
@@ -98,60 +111,88 @@ const ROUNDS=[
 ];
 const OPTIONS=["🐨 Lily","🐻 Haewon","🐰 Sullyoon","🐤 Bae","🐶 Jiwoo","🐱 Kyujin"];
 const MAX_WRONG=4;
+const CLASSIC_ROUNDS=6;
 let mode="classic",order,idx,score,streak,wrong,done,lost,solved,cur,bag=[],lastPic=null;
 const $=id=>document.getElementById(id);
-const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const shuffle=a=>{a=a.slice();
+  for(let i=a.length-1; i>0; i--)
+    {const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a};
+
 const gameHTML=$("game").innerHTML;
 
 function nextEndless(){
   if(!bag.length){
     bag=shuffle(ROUNDS);
-    if(bag[bag.length-1]===lastPic)[bag[0],bag[bag.length-1]]=[bag[bag.length-1],bag[0]];
+    if(bag[bag.length-1]===lastPic)
+      [bag[0],bag[bag.length-1]]=[bag[bag.length-1],bag[0]];
   }
-  lastPic=bag.pop();return lastPic;
+  lastPic=bag.pop();
+  return lastPic;
 }
+
 function setMode(m){
   mode=m;
   $("m-classic").setAttribute("aria-pressed",String(m==="classic"));
   $("m-endless").setAttribute("aria-pressed",String(m==="endless"));
   start();
 }
+
 function start(){
-  order=shuffle(ROUNDS);idx=0;score=0;streak=0;solved=0;lost=false;bag=[];lastPic=null;
+  order=shuffle(ROUNDS).slice(0,CLASSIC_ROUNDS);idx=0;score=0;streak=0;solved=0;lost=false;bag=[];lastPic=null;
   $("game").innerHTML=gameHTML;loadRound();
 }
+
 function loadRound(){
   cur=mode==="classic"?order[idx]:nextEndless();
-  wrong=0;done=false;
+  wrong=0;
+  done=false;
   $("photo").src=cur.e;
   $("photo").alt=cur.a;
   $("opts").innerHTML=OPTIONS.map(o=>`<button class="opt" data-a="${o}">${o}</button>`).join("");
   document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b));
   $("round").textContent=mode==="classic"?(idx+1)+"/"+order.length:""+(idx+1);
   $("score").textContent=score;$("streak").textContent=streak;
-  msg("");renderLives();
+  msg("");
+  renderLives();
   const sk=$("skip");sk.textContent="Skip";sk.className="alt";sk.onclick=skip;
 }
-function renderLives(){$("lives").textContent="❤️".repeat(MAX_WRONG-wrong)+"🖤".repeat(wrong)}
-function msg(t,c){const m=$("msg");m.textContent=t;m.className="msg "+(c||"")}
+
+function renderLives(){
+  $("lives").textContent="❤️".repeat(MAX_WRONG-wrong)+"🖤".repeat(wrong)
+}
+
+function msg(t,c){
+  const m=$("msg");
+  m.textContent=t;
+  m.className="msg "+(c||"")
+}
+
 function finishRound(){
   done=true;
   document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(b.dataset.a===cur.a)b.classList.add("right")});
   const last=mode==="classic"?idx+1>=order.length:lost;
   const next=$("skip");next.textContent=last?"See results":"Next picture";
   next.className="go";next.onclick=advance;
-  $("score").textContent=score;$("streak").textContent=streak;
+  $("score").textContent=score;
+  $("streak").textContent=streak;
 }
+
 function pick(btn){
   if(done)return;
   if(btn.dataset.a===cur.a){
     const pts=(MAX_WRONG-wrong)*3;
-    streak++;solved++;const bonus=streak>=3?2:0;score+=pts+bonus;
+    streak++;
+    solved++;
+    const bonus=streak>=3?2:0;
+    score+=pts+bonus;
     msg("Yes! +"+pts+(bonus?" (+2 streak bonus)":""),"ok");
     $("pic").classList.remove("pop");void $("pic").offsetWidth;$("pic").classList.add("pop");
     finishRound();
   }else{
-    wrong++;streak=0;renderLives();
+    wrong++;
+    streak=0;
+//    renderLives();
     btn.disabled=true;btn.classList.add("shake");
     if(wrong>=MAX_WRONG){
       lost=true;
@@ -161,19 +202,25 @@ function pick(btn){
     $("streak").textContent=streak;
   }
 }
-function skip(){if(done)return;streak=0;msg("Skipped. It was "+cur.a+".","no");finishRound()}
+
+function skip(){
+  if(done)return;streak=0;msg("Skipped. It was "+cur.a+".","no");finishRound()
+
+}
+
 function advance(){
   idx++;
   if((mode==="classic"&&idx>=order.length)||(mode==="endless"&&lost))return results();
   loadRound();
 }
+
 function results(){
   let face,body;
   if(mode==="classic"){
     const max=order.length*12;
     face=score>=max*.7?"images/daesang.jpg":score>=max*.4?"images/celebrate.gif":"images/disappointed.gif";
     body=`<p>${order.length} pictures played.</p>`;
-//    body=`<p>${order.length} pictures played. Best possible is ${max}.</p>`;
+//  body=`<p>${order.length} pictures played. Best possible is ${max}.</p>`;
   }else{
     let best=0;
     try{best=parseInt(localStorage.getItem("nmixx-best-endless")||"0",10)||0;if(score>best){best=score;localStorage.setItem("nmixx-best-endless",String(best))}}catch(e){best=Math.max(best,score)}
