@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<<<<<<< HEAD
 <title>Learn the Looks of NMIXX</title>
+=======
+<title>Peekaboo: Picture Guessing Game</title>
+>>>>>>> af839c2f4691d57fd353150a808f25902a6b392f
 <style>
 :root{
   box-sizing:border-box;
@@ -56,6 +60,7 @@ button.go{background:var(--tomato)}
 </head>
 <body>
 <main>
+<<<<<<< HEAD
   <h1>Learn who is whO.O</h1>
   <p class="sub">Choose the correct member in the frame, you lose a heart for every wrong answer.</p>
   <div class="modes" role="group" aria-label="Game mode">
@@ -64,6 +69,13 @@ button.go{background:var(--tomato)}
   </div>
   <div class="bar">
     <div class="chip"><span>Round</span><b id="round">1</b></div>
+=======
+  <h1>Peekaboo!</h1>
+  <p class="sub">Pick what the picture is. Every wrong pick costs a heart.</p>
+  <div class="modes" role="group" aria-label="Game mode"><button class="alt" id="m-classic" aria-pressed="true">Classic (6 pictures)</button><button class="alt" id="m-endless" aria-pressed="false">Endless</button></div>
+  <div class="bar">
+    <div class="chip"><span>Round</span><b id="round">1/8</b></div>
+>>>>>>> af839c2f4691d57fd353150a808f25902a6b392f
     <div class="chip"><span>Score</span><b id="score">0</b></div>
     <div class="chip"><span>Streak</span><b id="streak">0</b></div>
   </div>
@@ -77,6 +89,7 @@ button.go{background:var(--tomato)}
 </main>
 <script>
 const ROUNDS=[
+<<<<<<< HEAD
   {e:"🐨",a:"🐨 Lily"},{e:"🐻",a:"🐻 Haewon"},{e:"🐰",a:"🐰 Sullyoon"},
   {e:"🐤",a:"🐤 Bae"},{e:"🐶",a:"🐶 Jiwoo"},{e:"🐱",a:"🐱 Kyujin"}  
 ];
@@ -138,9 +151,15 @@ function pick(btn){
     btn.disabled=true;btn.classList.add("shake");
     if(wrong>=MAX_WRONG){
       lost=true;
+<<<<<<< HEAD
       msg(mode==="endless"?"Out of hearts. End of run! It was "+cur.a+".":"Out of hearts. It was "+cur.a+".","no");
       finishRound();
     }else msg("NO.OPE","no");
+=======
+      msg(mode==="endless"?"Out of hearts. Run over! It was "+cur.a+".":"Out of hearts. It was "+cur.a+".","no");
+      finishRound();
+    }else msg("Nope. Try another one.","no");
+>>>>>>> af839c2f4691d57fd353150a808f25902a6b392f
     $("streak").textContent=streak;
   }
 }
@@ -158,11 +177,19 @@ function results(){
     body=`<p>${order.length} pictures played. Best possible is ${max}.</p>`;
   }else{
     let best=0;
+<<<<<<< HEAD
     try{best=parseInt(localStorage.getItem("nmixx-best-endless")||"0",10)||0;if(score>best){best=score;localStorage.setItem("nmixx-best-endless",String(best))}}catch(e){best=Math.max(best,score)}
     face=solved>=12?"🏆":solved>=5?"🎉":"🙈";
     body=`<p>You got ${solved} member picture${solved===1?"":"s"} before running out of hearts. Best your score: ${best}.</p>`;
   }
   $("game").innerHTML=`<div class="end"><div class="big">${face}</div><h2>You scored ${score}</h2>${body}<button class="go" id="again">Play again</button></div>`;
+=======
+    try{best=parseInt(localStorage.getItem("peekaboo-best-endless")||"0",10)||0;if(score>best){best=score;localStorage.setItem("peekaboo-best-endless",String(best))}}catch(e){best=Math.max(best,score)}
+    face=solved>=12?"🏆":solved>=5?"🎉":"🙈";
+    body=`<p>You solved ${solved} picture${solved===1?"":"s"} before running out of hearts. Best this device: ${best}.</p>`;
+  }
+  $("game").innerHTML=`<div class="end"><div class="big">${face}</div><h2>You scored ${score} points</h2>${body}<button class="go" id="again">Play again</button></div>`;
+>>>>>>> af839c2f4691d57fd353150a808f25902a6b392f
   $("again").onclick=start;
 }
 $("m-classic").onclick=()=>setMode("classic");
@@ -170,4 +197,8 @@ $("m-endless").onclick=()=>setMode("endless");
 start();
 </script>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> af839c2f4691d57fd353150a808f25902a6b392f
