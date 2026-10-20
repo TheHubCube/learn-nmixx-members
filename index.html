@@ -20,7 +20,7 @@ body{margin:0;min-height:100vh;background:var(--bg);
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
-  background-attachment:fixed;color:var(--ink);font-family:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;font-size:18px;line-height:1.4;display:flex;justify-content:center;padding:20px 14px 40px}
+  color:var(--ink);font-family:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;font-size:18px;line-height:1.4;display:flex;justify-content:center;padding:20px 14px 40px}
 main{width:100%;max-width:520px}
 h1{font-size:clamp(2.2rem,9vw,3.2rem);line-height:1;margin:6px 0 4px;font-weight:700;letter-spacing:-.01em;transform:rotate(-2deg);display:inline-block}
 .sub{margin:0 0 16px;font-size:1rem;opacity:.85}
@@ -112,7 +112,7 @@ const ROUNDS=[
 const OPTIONS=["🐨 Lily","🐻 Haewon","🐰 Sullyoon","🐤 Bae","🐶 Jiwoo","🐱 Kyujin"];
 const MAX_WRONG=4;
 const CLASSIC_ROUNDS=6;
-let mode="classic",order,idx,score,streak,wrong,done,lost,solved,cur,bag=[],lastPic=null;
+let mode="classic",order,idx,score,streak,wrong,lives,done,lost,solved,cur,bag=[],lastPic=null;
 const $=id=>document.getElementById(id);
 const shuffle=a=>{a=a.slice();
   for(let i=a.length-1; i>0; i--)
@@ -139,7 +139,7 @@ function setMode(m){
 }
 
 function start(){
-  order=shuffle(ROUNDS).slice(0,CLASSIC_ROUNDS);idx=0;score=0;streak=0;solved=0;lost=false;bag=[];lastPic=null;
+  order=shuffle(ROUNDS).slice(0,CLASSIC_ROUNDS);idx=0;score=0;streak=0;lives=MAX_WRONG;lost=false;bag=[];lastPic=null;
   $("game").innerHTML=gameHTML;loadRound();
 }
 
@@ -159,7 +159,7 @@ function loadRound(){
 }
 
 function renderLives(){
-  $("lives").textContent="❤️".repeat(MAX_WRONG-wrong)+"🖤".repeat(wrong)
+  $("lives").textContent="❤️".repeat(lives)+"🖤".repeat(MAX_WRONG-lives)
 }
 
 function msg(t,c){
@@ -170,8 +170,9 @@ function msg(t,c){
 
 function finishRound(){
   done=true;
-  document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(b.dataset.a===cur.a)b.classList.add("right")});
-  const last=mode==="classic"?idx+1>=order.length:lost;
+  document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;
+  if(b.dataset.a===cur.a)b.classList.add("right")});
+  const last=lost||mode==="classic"&&idx+1>=order.length;
   const next=$("skip");next.textContent=last?"See results":"Next picture";
   next.className="go";next.onclick=advance;
   $("score").textContent=score;
@@ -191,10 +192,12 @@ function pick(btn){
     finishRound();
   }else{
     wrong++;
+    lives--;
     streak=0;
-//    renderLives();
-    btn.disabled=true;btn.classList.add("shake");
-    if(wrong>=MAX_WRONG){
+    renderLives();
+    btn.disabled=true;
+    btn.classList.add("shake");
+    if(lives<=0){
       lost=true;
       msg(mode==="endless"?"Out of hearts. End of run! It was "+cur.a+".":"Out of hearts. It was "+cur.a+".","no");
       finishRound();
@@ -210,7 +213,8 @@ function skip(){
 
 function advance(){
   idx++;
-  if((mode==="classic"&&idx>=order.length)||(mode==="endless"&&lost))return results();
+  if(lost||(mode==="classic"&&idx>=order.length)||(mode==="endless"&&lost))
+  return results();
   loadRound();
 }
 
@@ -219,8 +223,8 @@ function results(){
   if(mode==="classic"){
     const max=order.length*12;
     face=score>=max*.7?"images/daesang.jpg":score>=max*.4?"images/celebrate.gif":"images/disappointed.gif";
-    body=`<p>${order.length} pictures played.</p>`;
-//  body=`<p>${order.length} pictures played. Best possible is ${max}.</p>`;
+    body=`<p>${idx} of ${order.length} pictures played.`;
+//   body=`<p>${idx} of ${order.length} pictures played. Best possible is ${max}.</p>`;
   }else{
     let best=0;
     try{best=parseInt(localStorage.getItem("nmixx-best-endless")||"0",10)||0;if(score>best){best=score;localStorage.setItem("nmixx-best-endless",String(best))}}catch(e){best=Math.max(best,score)}
