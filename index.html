@@ -9,7 +9,7 @@
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
-  --bg:#ffd23f; --card:#ffffff; --ink:#2a1b3d; --grape:#5b3a9e; --tomato:#ff5a4e; --mint:#2fd08f; --sky:#4cc3ff;
+  --bg:"images/strangemuse.jpg"; --card:#ffffff; --ink:#2a1b3d; --grape:#5b3a9e; --tomato:#ff5a4e; --mint:#2fd08f; --sky:#4cc3ff;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a1b3d;--card:#3a2756;--ink:#fff4d6;--grape:#a98bff;--tomato:#ff7a6e;--mint:#3fe0a0;--sky:#6fd0ff}}
 :root[data-theme="dark"]{--bg:#2a1b3d;--card:#3a2756;--ink:#fff4d6;--grape:#a98bff;--tomato:#ff7a6e;--mint:#3fe0a0;--sky:#6fd0ff}
@@ -52,6 +52,7 @@ button.go{background:var(--tomato)}
 @keyframes pop{40%{transform:scale(1.15) rotate(-4deg)}}
 .end{text-align:center;padding:10px 0}
 .end .big{font-size:4rem}
+.end .big img{display:block;max-width:100%;max-height:35vh;margin:0 auto 12px;object-fit:contain}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -70,7 +71,7 @@ button.go{background:var(--tomato)}
   </div>
   <section class="card" id="game">
     <!-- place to tell that we are putting the image in the frame -->
-    <div class="pic" id="pic"><img id="photo" alt=""></div></div>
+    <div class="pic" id="pic"><img class="photo" id="photo" alt=""></div>
     <div class="lives" id="lives" aria-live="polite"></div>
     <div class="opts" id="opts" role="group" aria-label="Answer options"></div>
     <div class="tools"><button class="alt" id="skip">Skip</button></div>
@@ -95,7 +96,7 @@ const ROUNDS=[
   {e:"images/asdqbwiudo120801808129d7918d.jpg",a:"🐱 Kyujin"}
 
 ];
-const OPTIONS=ROUNDS.map(r=>r.a);
+const OPTIONS=["🐨 Lily","🐻 Haewon","🐰 Sullyoon","🐤 Bae","🐶 Jiwoo","🐱 Kyujin"];
 const MAX_WRONG=4;
 let mode="classic",order,idx,score,streak,wrong,done,lost,solved,cur,bag=[],lastPic=null;
 const $=id=>document.getElementById(id);
@@ -122,7 +123,8 @@ function start(){
 function loadRound(){
   cur=mode==="classic"?order[idx]:nextEndless();
   wrong=0;done=false;
-  $("photo").src=cur.img;
+  $("photo").src=cur.e;
+  $("photo").alt=cur.a;
   $("opts").innerHTML=OPTIONS.map(o=>`<button class="opt" data-a="${o}">${o}</button>`).join("");
   document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b));
   $("round").textContent=mode==="classic"?(idx+1)+"/"+order.length:""+(idx+1);
@@ -178,7 +180,7 @@ function results(){
     face=solved>=12?"images/daesang.jpg":solved>=5?"images/celebrate1.gif":"images/disappointed1.gif";
     body=`<p>You got ${solved} member picture${solved===1?"":"s"} before running out of hearts. Best your score: ${best}.</p>`;
   }
-  $("game").innerHTML=`<div class="end"><div class="big">${face}</div><h2>You scored ${score}</h2>${body}<button class="go" id="again">Play again</button></div>`;
+  $("game").innerHTML=`<div class="end"><div class="big"><img src="${face}" alt="Game result"></div><h2>You scored ${score}</h2>${body}<button class="go" id="again">Play again</button></div>`;
   $("again").onclick=start;
 }
 $("m-classic").onclick=()=>setMode("classic");
