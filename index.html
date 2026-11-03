@@ -39,7 +39,7 @@ h1{font-size:clamp(2.2rem,9vw,3.2rem);line-height:1;margin:6px 0 4px;font-weight
 .opt{color:#2a1b3d}
 .opt:nth-child(1){background:#C6DCF3}
 .opt:nth-child(2){background:#FFFFFF}
-.opt:nth-child(3){background:#083090}
+.opt:nth-child(3){background:#325CC8}
 .opt:nth-child(4){background:#FFF677}
 .opt:nth-child(5){background:#E8364C}
 .opt:nth-child(6){background:#F4AFCC}
@@ -139,7 +139,7 @@ function setMode(m){
 }
 
 function start(){
-  order=shuffle(ROUNDS).slice(0,CLASSIC_ROUNDS);idx=0;score=0;streak=0;lives=MAX_WRONG;lost=false;bag=[];lastPic=null;
+  order=shuffle(ROUNDS).slice(0,CLASSIC_ROUNDS);idx=0;score=0;streak=0;solved=0;lives=MAX_WRONG;lost=false;bag=[];lastPic=null;
   $("game").innerHTML=gameHTML;loadRound();
 }
 
@@ -148,7 +148,7 @@ function loadRound(){
   wrong=0;
   done=false;
   $("photo").src=cur.e;
-  $("photo").alt=cur.a;
+  $("photo").alt="SHOOG SHOOG";
   $("opts").innerHTML=OPTIONS.map(o=>`<button class="opt" data-a="${o}">${o}</button>`).join("");
   document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b));
   $("round").textContent=mode==="classic"?(idx+1)+"/"+order.length:""+(idx+1);
@@ -170,6 +170,7 @@ function msg(t,c){
 
 function finishRound(){
   done=true;
+  $("photo").alt=cur.a;
   document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;
   if(b.dataset.a===cur.a)b.classList.add("right")});
   const last=lost||mode==="classic"&&idx+1>=order.length;
