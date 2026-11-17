@@ -65,6 +65,15 @@ button.go{background:var(--tomato)}
 .end{text-align:center;padding:10px 0}
 .end .big{font-size:4rem}
 .end .big img{display:block;max-width:100%;max-height:35vh;margin:0 auto 12px;object-fit:contain}
+.end-btns{display:flex;gap:10px;justify-content:center;margin-top:12px}
+/* Homepage Mode Cards */
+.mode-list{display:flex;flex-direction:column;gap:14px}
+.mode-card{text-align:left;width:100%;padding:16px;border-radius:20px;background:var(--card);color:var(--ink);display:flex;flex-direction:column;gap:4px;box-shadow:5px 5px 0 var(--ink)}
+.mode-card .mode-title{font-size:1.25rem;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.mode-card .mode-desc{font-size:.95rem;font-weight:400;opacity:.9}
+.mode-card .badge{font-size:.8rem;background:var(--grape);color:#fff;padding:3px 9px;border-radius:10px;border:2px solid var(--ink)}
+.mode-card.jjyukkyu .badge{background:var(--tomato)}
+.top-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -72,23 +81,45 @@ button.go{background:var(--tomato)}
 <main>
   <h1>Learn who is whO.O</h1>
   <p class="sub">Choose the correct member in the frame, you lose a heart for every wrong answer. Skips dont lose hearts.</p>
-  <div class="modes" role="group" aria-label="Game mode">
-    <button class="alt" id="m-classic" aria-pressed="true">Classic</button>
-    <button class="alt" id="m-endless" aria-pressed="false">Endless</button>
-  </div>
-  <div class="bar">
-    <div class="chip"><span>Round</span><b id="round">1</b></div>
-    <div class="chip"><span>Score</span><b id="score">0</b></div>
-    <div class="chip"><span>Streak</span><b id="streak">0</b></div>
-  </div>
-  <section class="card" id="game">
-    <!-- place to tell that we are putting the image in the frame -->
-    <div class="pic" id="pic"><img class="photo" id="photo" alt=""></div>
-    <div class="lives" id="lives" aria-live="polite"></div>
-    <div class="opts" id="opts" role="group" aria-label="Answer options"></div>
-    <div class="tools"><button class="alt" id="skip">Skip</button></div>
-    <p class="msg" id="msg" aria-live="polite"></p>
+  
+  <!-- GAMEMODES SCREEN -->
+  <section id="home">
+    <div class="mode-list">
+      <button class="mode-card" id="start-classic">
+        <span class="mode-title"><span>🚢 Classic</span><span class="badge">6 Rounds</span></span>
+        <span class="mode-desc">Test your NMIXX knowledge across 6 random member photos.</span>
+      </button>
+      <button class="mode-card" id="start-endless">
+        <span class="mode-title"><span>♾️ Endless</span><span class="badge">Survival</span></span>
+        <span class="mode-desc">Keep going until you run out of hearts and set a new high score!</span>
+      </button>
+      <button class="mode-card jjyukkyu" id="start-jjyukkyu">
+        <span class="mode-title"><span>🐶🐱 JjyuKkyu Challenge</span><span class="badge">10 Rounds • 2:05</span></span>
+        <span class="mode-desc">Be an expert in recognizing the Maknae Monsters</span>
+      </button>
+    </div>
   </section>
+  
+  <!-- GAMEPLAY SCREEN -->
+  <div id="play-area" class="hidden">
+    <div class="top-nav">
+      <button class="alt" id="home-btn">← Modes</button>
+      <b id="mode-label">Classic</b>
+    </div>
+    <div class="bar">
+      <div class="chip"><span>Round</span><b id="round">1</b></div>
+      <div class="chip"><span>Score</span><b id="score">0</b></div>
+      <div class="chip"><span>Streak</span><b id="streak">0</b></div>
+      <div class="chip hidden" id="timer-chip"><span>Time</span><b id="timer">2:05</b></div>
+    </div>
+    <section class="card" id="game">
+      <div class="pic" id="pic"><img class="photo" id="photo" alt=""></div>
+      <div class="lives" id="lives" aria-live="polite"></div>
+      <div class="opts" id="opts" role="group" aria-label="Answer options"></div>
+      <div class="tools"><button class="alt" id="skip">Skip</button></div>
+      <p class="msg" id="msg" aria-live="polite"></p>
+    </section>
+  </div>
 </main>
 <script>
 
@@ -107,12 +138,33 @@ const ROUNDS=[
   {e:"images/121udnoioin1ondoasnco09821d.jpg",a:"🐶 Jiwoo"},
   {e:"images/1923e113bb59e3bdd8aafa435af41612b14ef982.jpg",a:"🐱 Kyujin"},
   {e:"images/asdqbwiudo120801808129d7918d.jpg",a:"🐱 Kyujin"}
-
 ];
+
+const JJYUKKYUROUNDS=[
+  {e:"images/fdb1a2a6a31afe9ac8f09eb47ad12e1bc6daa4cb.jpg",a:"🐶 Jiwoo"},
+  {e:"images/121udnoioin1ondoasnco09821d.jpg",a:"🐶 Jiwoo"},
+  {e:"images/1923e113bb59e3bdd8aafa435af41612b14ef982.jpg",a:"🐱 Kyujin"},
+  {e:"images/asdqbwiudo120801808129d7918d.jpg",a:"🐱 Kyujin"},
+  {e:"images/fdb1a2a6a31afe9ac8f09eb47ad12e1bc6daa4cb.jpg",a:"🐶 Jiwoo"},
+  {e:"images/121udnoioin1ondoasnco09821d.jpg",a:"🐶 Jiwoo"},
+  {e:"images/1923e113bb59e3bdd8aafa435af41612b14ef982.jpg",a:"🐱 Kyujin"},
+  {e:"images/asdqbwiudo120801808129d7918d.jpg",a:"🐱 Kyujin"},
+  {e:"images/fdb1a2a6a31afe9ac8f09eb47ad12e1bc6daa4cb.jpg",a:"🐶 Jiwoo"},
+  {e:"images/121udnoioin1ondoasnco09821d.jpg",a:"🐶 Jiwoo"},
+  {e:"images/1923e113bb59e3bdd8aafa435af41612b14ef982.jpg",a:"🐱 Kyujin"},
+  {e:"images/asdqbwiudo120801808129d7918d.jpg",a:"🐱 Kyujin"}
+];
+
+
 const OPTIONS=["🐨 Lily","🐻 Haewon","🐰 Sullyoon","🐤 Bae","🐶 Jiwoo","🐱 Kyujin"];
+const JJYUKKYU_OPTIONS=["🐶 Jiwoo","🐱 Kyujin"];
 const MAX_WRONG=4;
 const CLASSIC_ROUNDS=6;
+const JJYUKKYU_ROUNDS=10;
+const JJYUKKYU_TIME=125; // 2mins 4s = WHIP Length
+
 let mode="classic",order,idx,score,streak,wrong,lives,done,lost,solved,cur,bag=[],lastPic=null;
+let timeLeft=0, timerId=null;
 const $=id=>document.getElementById(id);
 const shuffle=a=>{a=a.slice();
   for(let i=a.length-1; i>0; i--)
@@ -120,6 +172,66 @@ const shuffle=a=>{a=a.slice();
   return a};
 
 const gameHTML=$("game").innerHTML;
+
+function stopTimer(){
+  if(timerId){clearInterval(timerId);timerId=null}
+}
+
+function formatTime(s){
+  const m=Math.floor(s/60),sec=s%60;
+  return m+":"+(sec<10?"0":"")+sec;
+}
+
+function updateTimerUI(){
+  $("timer").textContent=formatTime(timeLeft);
+  $("timer-chip").classList.toggle("urgent",timeLeft<=15);
+}
+
+function startTimer(){
+  stopTimer();
+  timeLeft=JJYUKKYU_TIME;
+  updateTimerUI();
+  timerId=setInterval(()=>{
+    timeLeft--;
+    updateTimerUI();
+    if(timeLeft<=0){
+      timeLeft=0;
+      stopTimer();
+      timedOut=true;
+      lost=true;
+      if(!done){
+        msg("Time's up! It was "+cur.a+".","no");
+        finishRound();
+      }else{
+        results();
+      }
+    }
+  },1000);
+}
+
+function nextFromPool(pool){
+  if(!bag.length){
+    bag=shuffle(pool);
+    if(bag.length>1&&bag[bag.length-1]===lastPic)
+      [bag[0],bag[bag.length-1]]=[bag[bag.length-1],bag[0]];
+  }
+  lastPic=bag.pop();
+  return lastPic;
+}
+
+function buildJjyuKkyuOrder(){
+  const pool=JJYUKKYUROUNDS.filter(r=>JJYUKKYU_OPTIONS.includes(r.a));
+  const out=[];
+  bag=[];lastPic=null;
+  for(let i=0;i<JJYUKKYUROUNDS;i++) out.push(nextFromPool(pool));
+  return out;
+}
+
+function showHome(){
+  stopTimer();
+  $("play-area").classList.add("hidden");
+  $("home").classList.remove("hidden");
+}
 
 function nextEndless(){
   if(!bag.length){
@@ -131,27 +243,39 @@ function nextEndless(){
   return lastPic;
 }
 
-function setMode(m){
+function startMode(m){
   mode=m;
-  $("m-classic").setAttribute("aria-pressed",String(m==="classic"));
-  $("m-endless").setAttribute("aria-pressed",String(m==="endless"));
+  $("home").classList.add("hidden");
+  $("play-area").classList.remove("hidden");
+  $("mode-label").textContent=m==="classic"?"🎯 Classic":m==="endless"?"♾️ Endless":"🐶🐱 JjyuKkyu Challenge";
+  $("timer-chip").classList.toggle("hidden",m!=="jjyukkyu");
   start();
 }
 
 function start(){
-  order=shuffle(ROUNDS).slice(0,CLASSIC_ROUNDS);idx=0;score=0;streak=0;solved=0;lives=MAX_WRONG;lost=false;bag=[];lastPic=null;
-  $("game").innerHTML=gameHTML;loadRound();
+  stopTimer();
+  idx=0;score=0;streak=0;solved=0;lives=MAX_WRONG;lost=false;bag=[];lastPic=null;timedOut=false;
+  if(mode==="classic")
+    order.shuffle(ROUNDS).slice(0,CLASSIC_ROUNDS);
+  else if(mode==="jjyukkyu") {
+    order=buildJjyuKkyuOrder();
+    startTimer();
+  }
+  
+  $("game").innerHTML=gameHTML;
+  loadRound();
 }
 
 function loadRound(){
-  cur=mode==="classic"?order[idx]:nextEndless();
+  cur=mode==="endless"?nextFromPool(ROUNDS):order[idx];
   wrong=0;
   done=false;
   $("photo").src=cur.e;
   $("photo").alt="SHOOG SHOOG";
-  $("opts").innerHTML=OPTIONS.map(o=>`<button class="opt" data-a="${o}">${o}</button>`).join("");
+  const activeOpts=mode==="jjyukkyu"?JJYUKKYU_OPTIONS:OPTIONS;
+  $("opts").innerHTML=activeOpts.map(o=>`<button class="opt" data-a="${o}">${o}</button>`).join("");
   document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b));
-  $("round").textContent=mode==="classic"?(idx+1)+"/"+order.length:""+(idx+1);
+  $("round").textContent=mode==="endless"?""+(idx+1):(idx+1)+"/"+order.length;
   $("score").textContent=score;$("streak").textContent=streak;
   msg("");
   renderLives();
@@ -173,7 +297,9 @@ function finishRound(){
   $("photo").alt=cur.a;
   document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;
   if(b.dataset.a===cur.a)b.classList.add("right")});
-  const last=lost||mode==="classic"&&idx+1>=order.length;
+  const last=lost||mode!=="endless"&&idx+1>=order.length;
+  if(last)
+    stopTimer();
   const next=$("skip");next.textContent=last?"See results":"Next picture";
   next.className="go";next.onclick=advance;
   $("score").textContent=score;
@@ -214,8 +340,8 @@ function skip(){
 
 function advance(){
   idx++;
-  if(lost||(mode==="classic"&&idx>=order.length)||(mode==="endless"&&lost))
-  return results();
+  if(lost||(mode!=="endless"&&idx>=order.length))
+    return results();
   loadRound();
 }
 
@@ -225,19 +351,25 @@ function results(){
     const max=order.length*12;
     face=score>=max*.7?"images/daesang.jpg":score>=max*.4?"images/celebrate.gif":"images/disappointed.gif";
     body=`<p>${idx} of ${order.length} pictures played.</p>`;
-//   body=`<p>${idx} of ${order.length} pictures played. Best possible is ${max}.</p>`;
+  }else if(mode==="jjyukkyu"){
+    const max=order.length*12;
+    face=score>=max*.7&&!timedOut?"images/jjyukkyu.jpg":score>=max*.4?"images/jjyukkyucelebrate.gif":"images/disappointed.gif";
+    const status=timedOut?"Time ran out!":lost?"Ran out of hearts!":`Finished with ${formatTime(timeLeft)} left!`;
+    body=`<p>${status} You got ${solved} of ${order.length} pictures right.</p>`;
   }else{
     let best=0;
     try{best=parseInt(localStorage.getItem("nmixx-best-endless")||"0",10)||0;if(score>best){best=score;localStorage.setItem("nmixx-best-endless",String(best))}}catch(e){best=Math.max(best,score)}
     face=solved>=12?"images/daesang.jpg":solved>=5?"images/celebrate1.gif":"images/disappointed1.gif";
-    body=`<p>You got ${solved} member picture${solved===1?"":"s"} before running out of hearts. Best your score: ${best}.</p>`;
+    body=`<p>You got ${solved} member picture${solved===1?"":"s"} before running out of hearts. Beat your score: ${best}.</p>`;
   }
-  $("game").innerHTML=`<div class="end"><div class="big"><img src="${face}" alt="Game result"></div><h2>You scored ${score}</h2>${body}<button class="go" id="again">Play again</button></div>`;
+  $("game").innerHTML=`<div class="end"><div class="big"><img src="${face}" alt="Game result"></div><h2>You scored ${score}</h2>${body}<div class="end-btns"><button class="alt" id="back-home">Modes</button><button class="go" id="again">Play again</button></div></div>`;
   $("again").onclick=start;
+  $("back-home").onclick=showHome;
 }
-$("m-classic").onclick=()=>setMode("classic");
-$("m-endless").onclick=()=>setMode("endless");
-start();
+$("m-classic").onclick=()=>startMode("classic");
+$("m-endless").onclick=()=>startMode("endless");
+$("m-jjyukkyu").onclick=()=>startMode("jjyukkyu");
+$("home-btn").onclick=showHome;
 </script>
 </body>
 </html>

@@ -13,7 +13,7 @@ No build step or dependencies required. Simply clone the repository and open `in
 ## Photo & Media Credits
 All photos, GIFs, and promotional images of NMIXX belong to their respective owners and are used here strictly for non-commercial fan educational/entertainment purposes:
 * **Official Promotional & Concept Photos:** JYP Entertainment / SQU4D (including official NMIXX social media channels)
-* **Broadcast Captures & Reaction GIFs:** KBS, MBC, SBS, Mnet, and NMIXX Official YouTube content (*PICK NMIXX*, *MIXXTREAM*)
+* **Broadcast Captures & Reaction GIFs:** KBS, MBC, SBS, Mnet, and NMIXX Official YouTube, NMIXX Official X, NMIXX Official Instagram content
 * **Fan-taken Press & Showcase Photos:** Credited to respective fansites and press photographers
 
 If you are the copyright holder of any image used in this project and would like it credited specifically or removed, please open an issue in this repository.
