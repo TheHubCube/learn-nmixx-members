@@ -15,12 +15,21 @@
 :root[data-theme="dark"]{--bg:#2a1b3d;--card:#3a2756;--ink:#fff4d6;--grape:#a98bff;--tomato:#ff7a6e;--mint:#3fe0a0;--sky:#6fd0ff}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:var(--bg);
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--bg);
   background-image:url("images/strangemuse.jpg");
-  background-size:cover;
+  background-size:auto;
   background-position:center;
   background-repeat:repeat;
-  color:var(--ink);font-family:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;font-size:18px;line-height:1.4;display:flex;justify-content:center;padding:20px 14px 40px}
+  color:var(--ink);
+  font-family:"Fredoka","Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  font-size:18px;
+  line-height:1.4;
+  display:flex;
+  justify-content:center;
+  padding:20px 14px 40px}
 main{width:100%;max-width:520px}
 h1{font-size:clamp(2.2rem,9vw,3.2rem);line-height:1;margin:6px 0 4px;font-weight:700;letter-spacing:-.01em;transform:rotate(-2deg);display:inline-block}
 .sub{margin:0 0 16px;font-size:1rem;opacity:.85}
@@ -329,6 +338,9 @@ function pick(btn){
     if(lives<=0){
       lost=true;
       msg(mode==="endless"?"Out of hearts. End of run! It was "+cur.a+".":"Out of hearts. It was "+cur.a+".","no");
+      finishRound();
+    }else if(mode==="jjyukkyu"){
+      msg("NO.OPE! It was "+cur.a);
       finishRound();
     }else msg("NO.OPE","no");
     $("streak").textContent=streak;
