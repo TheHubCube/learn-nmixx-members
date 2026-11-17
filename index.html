@@ -37,12 +37,12 @@ h1{font-size:clamp(2.2rem,9vw,3.2rem);line-height:1;margin:6px 0 4px;font-weight
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 .opt{background:var(--card);color:var(--ink);text-align:center;padding:12px 8px}
 .opt{color:#2a1b3d}
-.opt:nth-child(1){background:#C6DCF3}
-.opt:nth-child(2){background:#FFFFFF}
-.opt:nth-child(3){background:#325CC8}
-.opt:nth-child(4){background:#FFF677}
-.opt:nth-child(5){background:#E8364C}
-.opt:nth-child(6){background:#F4AFCC}
+.opt[data-a="🐨 Lily"]{background:#C6DCF3}
+.opt[data-a="🐻 Haewon"]{background:#FFFFFF}
+.opt[data-a="🐰 Sullyoon"]{background:#325CC8}
+.opt[data-a="🐤 Bae"]{background:#FFF677}
+.opt[data-a="🐶 Jiwoo"]{background:#E8364C}
+.opt[data-a="🐱 Kyujin"]{background:#F4AFCC}
 .opt:disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through;box-shadow:none;transform:none}
 .opt.right{background:var(--mint);color:var(--ink);opacity:1;text-decoration:none}
 .opt.shake{animation:shake .35s}
@@ -74,6 +74,8 @@ button.go{background:var(--tomato)}
 .mode-card .badge{font-size:.8rem;background:var(--grape);color:#fff;padding:3px 9px;border-radius:10px;border:2px solid var(--ink)}
 .mode-card.jjyukkyu .badge{background:var(--tomato)}
 .top-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.hidden{display:none!important}
+.chip.urgent{background:var(--tomato);color:#fff}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -85,15 +87,15 @@ button.go{background:var(--tomato)}
   <!-- GAMEMODES SCREEN -->
   <section id="home">
     <div class="mode-list">
-      <button class="mode-card" id="start-classic">
+      <button class="mode-card" id="m-classic">
         <span class="mode-title"><span>🚢 Classic</span><span class="badge">6 Rounds</span></span>
         <span class="mode-desc">Test your NMIXX knowledge across 6 random member photos.</span>
       </button>
-      <button class="mode-card" id="start-endless">
+      <button class="mode-card" id="m-endless">
         <span class="mode-title"><span>♾️ Endless</span><span class="badge">Survival</span></span>
         <span class="mode-desc">Keep going until you run out of hearts and set a new high score!</span>
       </button>
-      <button class="mode-card jjyukkyu" id="start-jjyukkyu">
+      <button class="mode-card jjyukkyu" id="m-jjyukkyu">
         <span class="mode-title"><span>🐶🐱 JjyuKkyu Challenge</span><span class="badge">10 Rounds • 2:05</span></span>
         <span class="mode-desc">Be an expert in recognizing the Maknae Monsters</span>
       </button>
@@ -223,7 +225,7 @@ function buildJjyuKkyuOrder(){
   const pool=JJYUKKYUROUNDS.filter(r=>JJYUKKYU_OPTIONS.includes(r.a));
   const out=[];
   bag=[];lastPic=null;
-  for(let i=0;i<JJYUKKYUROUNDS;i++) out.push(nextFromPool(pool));
+  for(let i=0;i<JJYUKKYU_ROUNDS;i++) out.push(nextFromPool(pool));
   return out;
 }
 
@@ -256,12 +258,12 @@ function start(){
   stopTimer();
   idx=0;score=0;streak=0;solved=0;lives=MAX_WRONG;lost=false;bag=[];lastPic=null;timedOut=false;
   if(mode==="classic")
-    order.shuffle(ROUNDS).slice(0,CLASSIC_ROUNDS);
+    order=shuffle(ROUNDS).slice(0,CLASSIC_ROUNDS);
   else if(mode==="jjyukkyu") {
     order=buildJjyuKkyuOrder();
     startTimer();
   }
-  
+
   $("game").innerHTML=gameHTML;
   loadRound();
 }
