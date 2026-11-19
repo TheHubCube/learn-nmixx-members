@@ -57,6 +57,32 @@ h1{font-size:clamp(2.2rem,9vw,3.2rem);line-height:1;margin:6px 0 4px;font-weight
 .opt.shake{animation:shake .35s}
 .lives{text-align:center;font-size:1.3rem;min-height:1.8rem;margin-bottom:10px}
 .row{display:flex;gap:10px}
+#mode-label{
+  background:var(--card);
+  color:var(--ink);
+  border:3px solid var(--ink);
+  border-radius:14px;
+  padding:10px 16px;
+  box-shadow:3px 3px 0 var(--ink);
+}
+/* Floating Timer */
+#timer-chip{
+  position:fixed;
+  top:20px;
+  left:min(calc(50% + 272px), calc(100vw - 135px));
+  width:120px;
+  z-index:100;
+  pointer-events:none;
+}
+@media (max-width:700px){
+  #timer-chip{
+    top:20px;
+    padding:4px 10px;
+    font-size:.9rem;
+    opacity:.95;
+  }
+}
+
 button:focus-visible{outline:4px solid var(--sky);outline-offset:2px}
 button{font:inherit;font-weight:700;cursor:pointer;color:#fff;background:var(--grape);border:3px solid var(--ink);border-radius:14px;padding:10px 16px;box-shadow:3px 3px 0 var(--ink);transition:transform .1s,box-shadow .1s}
 button:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
@@ -166,13 +192,12 @@ const JJYUKKYUROUNDS=[
   {e:"images/asdqbwiudo120801808129d7918d.jpg",a:"🐱 Kyujin"}
 ];
 
-
 const OPTIONS=["🐨 Lily","🐻 Haewon","🐰 Sullyoon","🐤 Bae","🐶 Jiwoo","🐱 Kyujin"];
 const JJYUKKYU_OPTIONS=["🐶 Jiwoo","🐱 Kyujin"];
 const MAX_WRONG=4;
 const CLASSIC_ROUNDS=6;
 const JJYUKKYU_ROUNDS=10;
-const JJYUKKYU_TIME=125; // 2mins 4s = WHIP Length
+const JJYUKKYU_TIME=124; // 2mins 4s = WHIP Length
 
 let mode="classic",order,idx,score,streak,wrong,lives,done,lost,solved,cur,bag=[],lastPic=null;
 let timeLeft=0, timerId=null;
@@ -184,20 +209,24 @@ const shuffle=a=>{a=a.slice();
 
 const gameHTML=$("game").innerHTML;
 
+// Stops the countdown timer
 function stopTimer(){
   if(timerId){clearInterval(timerId);timerId=null}
 }
 
+// Format seconds as minutes and seconds
 function formatTime(s){
   const m=Math.floor(s/60),sec=s%60;
   return m+":"+(sec<10?"0":"")+sec;
 }
 
+// Updates the timer text and urgent state
 function updateTimerUI(){
   $("timer").textContent=formatTime(timeLeft);
   $("timer-chip").classList.toggle("urgent",timeLeft<=15);
 }
 
+// Starts the countdown for any timed mode -> now just jjyukkyu
 function startTimer(){
   stopTimer();
   timeLeft=JJYUKKYU_TIME;
@@ -220,6 +249,7 @@ function startTimer(){
   },1000);
 }
 
+// Pulls up the next picture
 function nextFromPool(pool){
   if(!bag.length){
     bag=shuffle(pool);
@@ -230,6 +260,7 @@ function nextFromPool(pool){
   return lastPic;
 }
 
+// Builds the picture order for JjyuKkyu
 function buildJjyuKkyuOrder(){
   const pool=JJYUKKYUROUNDS.filter(r=>JJYUKKYU_OPTIONS.includes(r.a));
   const out=[];
@@ -238,12 +269,14 @@ function buildJjyuKkyuOrder(){
   return out;
 }
 
+// Returns the game to homepage mode selection
 function showHome(){
   stopTimer();
   $("play-area").classList.add("hidden");
   $("home").classList.remove("hidden");
 }
 
+// Gets the next picture for endless mode
 function nextEndless(){
   if(!bag.length){
     bag=shuffle(ROUNDS);
@@ -254,6 +287,7 @@ function nextEndless(){
   return lastPic;
 }
 
+// Selects a game mode and begins play
 function startMode(m){
   mode=m;
   $("home").classList.add("hidden");
@@ -263,6 +297,7 @@ function startMode(m){
   start();
 }
 
+// Resets game state and starts a new run within the mode
 function start(){
   stopTimer();
   idx=0;score=0;streak=0;solved=0;lives=MAX_WRONG;lost=false;bag=[];lastPic=null;timedOut=false;
@@ -277,6 +312,7 @@ function start(){
   loadRound();
 }
 
+// Displays the next picture and answer choices
 function loadRound(){
   cur=mode==="endless"?nextFromPool(ROUNDS):order[idx];
   wrong=0;
@@ -293,16 +329,19 @@ function loadRound(){
   const sk=$("skip");sk.textContent="Skip";sk.className="alt";sk.onclick=skip;
 }
 
+// Updates hearts display
 function renderLives(){
   $("lives").textContent="❤️".repeat(lives)+"🖤".repeat(MAX_WRONG-lives)
 }
 
+// Displays a status message with an optional style
 function msg(t,c){
   const m=$("msg");
   m.textContent=t;
   m.className="msg "+(c||"")
 }
 
+// Ends the current guess and enables going to the next picture
 function finishRound(){
   done=true;
   $("photo").alt=cur.a;
@@ -317,6 +356,7 @@ function finishRound(){
   $("streak").textContent=streak;
 }
 
+// Things happen when an answer is picked
 function pick(btn){
   if(done)return;
   if(btn.dataset.a===cur.a){
@@ -347,11 +387,13 @@ function pick(btn){
   }
 }
 
+// Skips the current picture
 function skip(){
   if(done)return;streak=0;msg("Skipped. It was "+cur.a+".","no");finishRound()
 
 }
 
+// Load next round or show the results screen
 function advance(){
   idx++;
   if(lost||(mode!=="endless"&&idx>=order.length))
@@ -359,6 +401,7 @@ function advance(){
   loadRound();
 }
 
+// Calculates and displays end results
 function results(){
   let face,body;
   if(mode==="classic"){
